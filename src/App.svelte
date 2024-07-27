@@ -39,6 +39,7 @@
     );
     const reposData = await reposResponse.json();
     if (reposData.length === 0) {
+      loading = false;
       await checkRateLimit();
       return;
     }
