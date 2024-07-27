@@ -93,18 +93,24 @@ input[type="text"]:focus {
 
 .input-section {
   display: flex;
+  flex-direction: column;
   gap: 1em;
   margin-bottom: 1em;
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  align-items: center;
+  justify-content: center;
 }
 
-.input-section > :first-child {
+.search-section {
+  display: flex;
+  gap: 1em;
+  width: 80%;
+}
+
+.search-section > :first-child {
   width: 70%;
 }
 
-.input-section > :last-child {
+.search-section > :last-child {
   width: 30%;
 }
 
@@ -116,6 +122,33 @@ input[type="text"]:focus {
 .no-deco-list {
   list-style-type: none;
   padding: 0;
+}
+
+#gh-user-data {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1em;
+  border: 2px solid var(--txt);
+  border-radius: 8px;
+  margin-bottom: 1em;
+}
+
+#gh-user-data img {
+  border-radius: 50%;
+  width: 256px;
+  height: 256px;
+}
+
+#gh-user-main-data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+#gh-user-main-data p {
+  margin: 0;
+  text-align: left;
 }
 
 .loader {

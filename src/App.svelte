@@ -1,12 +1,21 @@
 <script lang="ts">
-  import type { Maybe, RateLimitData, UserData } from "./types";
+  import type { Maybe, RateLimitData, ReposData, UserData } from "./types";
   import EmailSection from "./EmailSection.svelte";
+  import UserDataSection from "./UserDataSection.svelte";
 
   let username: string = "";
   let data: Maybe<UserData>;
   let emails: Maybe<Set<string>>;
   let loading = false;
   let rateLimitData: Maybe<RateLimitData>;
+  let reposData: Maybe<ReposData[]>;
+  let fetchData = false;
+  $: fetchedUsername = data?.login || reposData?.[0]?.owner?.login || undefined;
+  $: document.title = fetchedUsername
+    ? `GitHub User Lookup: ${fetchedUsername}`
+    : "GitHub User Lookup";
+  $: fetchedAvatar =
+    data?.avatar_url || reposData?.[0]?.owner?.avatar_url || undefined;
 
   export const checkRateLimit = async () =>
     await fetch("https://api.github.com/rate_limit")
@@ -29,15 +38,17 @@
     data = undefined;
     loading = true;
     emails = new Set<string>();
-    // const response = await fetch(`https://api.github.com/users/${username}`);
-    // const responseData = await response.json();
+    if (fetchData) {
+      const response = await fetch(`https://api.github.com/users/${username}`);
+      data = await response.json();
+    }
     let page = 1;
     const repoCommits = [];
     const reposResponse = await fetch(
       `https://api.github.com/users/${username}/repos?page=${page}&per_page=100`,
     );
-    const reposData = await reposResponse.json();
-    if (reposData.length === 0) {
+    reposData = await reposResponse.json();
+    if (!reposData || reposData.length === 0) {
       loading = false;
       await checkRateLimit();
       return;
@@ -55,7 +66,6 @@
         .filter((email: string) => email),
     );
 
-    // data = responseData;
     loading = false;
 
     await checkRateLimit();
@@ -66,13 +76,19 @@
   <h1 id="gh-title">GitHub User Lookup</h1>
   <div id="gh-user-lookup">
     <div class="input-section">
-      <input
-        type="text"
-        id="gh-user-search"
-        placeholder="Enter a GitHub username"
-        bind:value={username}
-      />
-      <button id="gh-user-lookup-button" on:click={userLookup}>Lookup</button>
+      <div class="search-section">
+        <input
+          type="text"
+          id="gh-user-search"
+          placeholder="Enter a GitHub username"
+          bind:value={username}
+        />
+        <button id="gh-user-lookup-button" on:click={userLookup}>Lookup</button>
+      </div>
+      <div>
+        <input type="checkbox" id="gh-data-checkbox" bind:checked={fetchData} />
+        <label for="gh-data-checkbox">Show regular data</label>
+      </div>
     </div>
     {#if rateLimitData != null}
       <p>
@@ -90,8 +106,13 @@
     {/if}
     {#if loading}
       <span class="loader"></span>
-    {:else if emails}
-      <EmailSection {emails} />
+    {:else}
+      {#if fetchedUsername && fetchedAvatar}
+        <UserDataSection {fetchedUsername} {fetchedAvatar} {data} />
+      {/if}
+      {#if emails}
+        <EmailSection {emails} />
+      {/if}
     {/if}
   </div>
 </main>
