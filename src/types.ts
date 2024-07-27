@@ -1,3 +1,5 @@
+export type Maybe<T> = T | undefined;
+
 export interface UserData {
   login: string;
   id: number;
@@ -31,4 +33,29 @@ export interface UserData {
   following: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface RateLimitData {
+  resources: {
+    core: {
+      limit: number;
+      remaining: number;
+      reset: number;
+    };
+    search: {
+      limit: number;
+      remaining: number;
+      reset: number;
+    };
+    graphql: {
+      limit: number;
+      remaining: number;
+      reset: number;
+    };
+  };
+  rate: {
+    limit: number;
+    remaining: number;
+    reset: number;
+  };
 }

@@ -1,19 +1,17 @@
 <script lang="ts">
-  import type { UserData } from "./types";
+  import type { Maybe, RateLimitData, UserData } from "./types";
 
   let username: string = "";
-  let data = undefined as UserData | undefined;
+  let data: Maybe<UserData>;
   let emails = new Set<string>();
   let loading = false;
-  let rateLimitData = undefined as
-    | { limit: number; used: number; remaining: number; reset: number }
-    | undefined;
+  let rateLimitData: Maybe<RateLimitData>;
 
   export const checkRateLimit = async () =>
     await fetch("https://api.github.com/rate_limit")
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<RateLimitData>)
       .then((response) => {
-        rateLimitData = response.resources.core;
+        rateLimitData = response;
       })
       .catch((error) => {
         console.error(error);
@@ -23,7 +21,7 @@
 
   export const userLookup = async () => {
     await checkRateLimit();
-    if (!rateLimitData || rateLimitData.remaining === 0) {
+    if (!rateLimitData || rateLimitData.resources.core.remaining === 0) {
       return;
     }
     console.log(username);
@@ -70,24 +68,25 @@
       <input
         type="text"
         id="gh-user-search"
-        placeholder="Type a GitHub username"
+        placeholder="Enter a GitHub username"
         bind:value={username}
       />
-      <button id="gh-user-lookup-button" on:click={userLookup}> Lookup </button>
+      <button id="gh-user-lookup-button" on:click={userLookup}>Lookup</button>
     </div>
     {#if loading}
       <h3>Loading...</h3>
     {/if}
-    {#if rateLimitData}
+    {#if rateLimitData != null}
       <p>
-        Available searches: {rateLimitData.remaining} / {rateLimitData.limit}
+        Available searches: {rateLimitData.rate.remaining} / {rateLimitData.rate
+          .limit}
       </p>
       <p>
         Rate limit resets at: {new Date(
-          rateLimitData.reset * 1000,
+          rateLimitData.rate.reset * 1000,
         ).toLocaleTimeString()}
       </p>
-      {#if rateLimitData.remaining === 0}
+      {#if rateLimitData.rate.remaining === 0}
         <p>Rate limit exceeded. Please try again later.</p>
       {/if}
     {/if}
