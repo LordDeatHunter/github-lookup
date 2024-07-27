@@ -1,9 +1,10 @@
 <script lang="ts">
   import type { Maybe, RateLimitData, UserData } from "./types";
+  import EmailSection from "./EmailSection.svelte";
 
   let username: string = "";
   let data: Maybe<UserData>;
-  let emails = new Set<string>();
+  let emails: Maybe<Set<string>>;
   let loading = false;
   let rateLimitData: Maybe<RateLimitData>;
 
@@ -73,9 +74,6 @@
       />
       <button id="gh-user-lookup-button" on:click={userLookup}>Lookup</button>
     </div>
-    {#if loading}
-      <h3>Loading...</h3>
-    {/if}
     {#if rateLimitData != null}
       <p>
         Available searches: {rateLimitData.rate.remaining} / {rateLimitData.rate
@@ -90,17 +88,10 @@
         <p>Rate limit exceeded. Please try again later.</p>
       {/if}
     {/if}
-    {#if emails.size > 0}
-      <div id="gh-user-emails">
-        {#if emails.size > 0}
-          <h2>Emails</h2>
-          <ul class="no-deco-list">
-            {#each emails as email}
-              <li>{email}</li>
-            {/each}
-          </ul>
-        {/if}
-      </div>
+    {#if loading}
+      <h3>Loading...</h3>
+    {:else if emails}
+      <EmailSection {emails} />
     {/if}
   </div>
 </main>
