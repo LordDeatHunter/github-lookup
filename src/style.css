@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "Monaspace Krypton";
+  src: url("MonaspaceKrypton-Regular.woff2") format("woff2");
+}
+
+:root {
+  --bgr: #2a2c2f;
+  --txt: rgba(255, 255, 255, 0.87);
+  --selection: #646cff;
+  --btn-bg: #1a1a1a;
+  --highlight: #bea540;
+
+  font-family: "Monaspace Krypton", monospace;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: var(--txt);
+  background-color: var(--bgr);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+#gh-title {
+  color: var(--highlight);
+  font-size: 4em;
+}
+
+.card {
+  padding: 2em;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--highlight);
+  cursor: pointer;
+  transition: border-color 0.25s;
+  outline: none;
+}
+
+button:hover,
+button:focus,
+button:focus-visible {
+  border-color: var(--selection);
+}
+
+button:focus,
+button:focus-visible {
+  box-shadow: 0 0 0 2px var(--selection);
+}
+
+input[type="text"] {
+  border: 1px solid var(--txt);
+  border-radius: 8px;
+  padding: 0.6em 1em;
+  font-size: 1em;
+  font-family: inherit;
+  transition: border-color 0.25s;
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: var(--selection);
+}
+
+.input-section {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1em;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.input-section > :first-child {
+  width: 70%;
+}
+
+.input-section > :last-child {
+  width: 30%;
+}
+
+#gh-user-emails {
+  border: 2px solid var(--txt);
+  border-radius: 8px;
+}
+
+.no-deco-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bgr: #e1e4e8;
+    --txt: #213547;
+    --btn-bg: #f9f9f9;
+  }
+}
