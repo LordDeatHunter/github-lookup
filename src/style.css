@@ -9,6 +9,7 @@
   --selection: #646cff;
   --btn-bg: #1a1a1a;
   --highlight: #bea540;
+  --error: #ff4d4d;
 
   font-family: "Monaspace Krypton", monospace;
   line-height: 1.5;
@@ -176,6 +177,10 @@ input[type="text"]:focus {
   border-bottom-color: var(--highlight);
 }
 
+.error-message {
+  color: var(--error);
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -190,5 +195,7 @@ input[type="text"]:focus {
     --bgr: #e1e4e8;
     --txt: #213547;
     --btn-bg: #f9f9f9;
+    --highlight: #2ea44f;
+    --error: #d73a49;
   }
 }

@@ -16,6 +16,7 @@
     : "GitHub User Lookup";
   $: fetchedAvatar =
     data?.avatar_url || reposData?.[0]?.owner?.avatar_url || undefined;
+  let invalidUser = false;
 
   export const checkRateLimit = async () =>
     await fetch("https://api.github.com/rate_limit")
@@ -29,17 +30,27 @@
 
   checkRateLimit();
 
-  export const userLookup = async () => {
+  export const fetchRequest = async (requestFunction: () => Promise<any>) => {
     await checkRateLimit();
+    loading = true;
     if (!rateLimitData || rateLimitData.resources.core.remaining === 0) {
       return;
     }
-    console.log(username);
+    await requestFunction();
+    await checkRateLimit();
+    loading = false;
+  };
+
+  export const userLookup = async () => {
+    invalidUser = false;
     data = undefined;
-    loading = true;
-    emails = new Set<string>();
+    emails = undefined;
     if (fetchData) {
       const response = await fetch(`https://api.github.com/users/${username}`);
+      if (response.status !== 200) {
+        invalidUser = true;
+        return;
+      }
       data = await response.json();
     }
     let page = 1;
@@ -47,10 +58,12 @@
     const reposResponse = await fetch(
       `https://api.github.com/users/${username}/repos?page=${page}&per_page=100`,
     );
+    if (reposResponse.status !== 200) {
+      invalidUser = true;
+      return;
+    }
     reposData = await reposResponse.json();
     if (!reposData || reposData.length === 0) {
-      loading = false;
-      await checkRateLimit();
       return;
     }
     repoCommits.push(...reposData.map((repo: any) => repo.commits_url));
@@ -65,10 +78,6 @@
         .map((commit: any) => commit.commit.author.email)
         .filter((email: string) => email),
     );
-
-    loading = false;
-
-    await checkRateLimit();
   };
 </script>
 
@@ -83,7 +92,11 @@
           placeholder="Enter a GitHub username"
           bind:value={username}
         />
-        <button id="gh-user-lookup-button" on:click={userLookup}>Lookup</button>
+        <button
+          id="gh-user-lookup-button"
+          on:click={() => fetchRequest(userLookup)}
+          >Lookup
+        </button>
       </div>
       <div>
         <input type="checkbox" id="gh-data-checkbox" bind:checked={fetchData} />
@@ -113,6 +126,9 @@
       {#if emails}
         <EmailSection {emails} />
       {/if}
+    {/if}
+    {#if invalidUser}
+      <h2 class="error-message">Invalid user.</h2>
     {/if}
   </div>
 </main>
