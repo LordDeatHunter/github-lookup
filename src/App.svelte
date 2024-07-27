@@ -89,7 +89,7 @@
       {/if}
     {/if}
     {#if loading}
-      <h3>Loading...</h3>
+      <span class="loader"></span>
     {:else if emails}
       <EmailSection {emails} />
     {/if}
