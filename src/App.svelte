@@ -132,3 +132,11 @@
     {/if}
   </div>
 </main>
+<footer>
+  <p>
+    Source code available on
+    <a href="https://github.com/LordDeatHunter/github-lookup" target="_blank">
+      GitHub
+    </a>
+  </p>
+</footer>
