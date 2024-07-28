@@ -211,6 +211,17 @@ a:hover {
   text-decoration: underline;
 }
 
+.rate-limit-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin: 1em 0;
+}
+
+.rate-limit-section p {
+  margin: 0;
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);

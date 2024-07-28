@@ -2,6 +2,7 @@
   import type { Maybe, RateLimitData, ReposData, UserData } from "./types";
   import EmailSection from "./EmailSection.svelte";
   import UserDataSection from "./UserDataSection.svelte";
+  import RateLimitSection from "./RateLimitSection.svelte";
 
   let username: string = "";
   let data: Maybe<UserData>;
@@ -17,6 +18,7 @@
   $: fetchedAvatar =
     data?.avatar_url || reposData?.[0]?.owner?.avatar_url || undefined;
   let invalidUser = false;
+  $: cost = fetchData ? 3 : 2;
 
   export const checkRateLimit = async () =>
     await fetch("https://api.github.com/rate_limit")
@@ -95,7 +97,8 @@
         <button
           id="gh-user-lookup-button"
           on:click={() => fetchRequest(userLookup)}
-          >Lookup
+        >
+          Lookup
         </button>
       </div>
       <div>
@@ -104,18 +107,7 @@
       </div>
     </div>
     {#if rateLimitData != null}
-      <p>
-        Available searches: {rateLimitData.rate.remaining} / {rateLimitData.rate
-          .limit}
-      </p>
-      <p>
-        Rate limit resets at: {new Date(
-          rateLimitData.rate.reset * 1000,
-        ).toLocaleTimeString()}
-      </p>
-      {#if rateLimitData.rate.remaining === 0}
-        <p>Rate limit exceeded. Please try again later.</p>
-      {/if}
+      <RateLimitSection {rateLimitData} {cost} />
     {/if}
     {#if loading}
       <span class="loader"></span>
